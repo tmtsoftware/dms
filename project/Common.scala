@@ -1,12 +1,13 @@
 import com.typesafe.sbt.site.SitePlugin.autoImport.siteDirectory
-import org.scalafmt.sbt.ScalafmtPlugin.autoImport.scalafmtOnCompile
 import org.tmt.sbt.docs.DocKeys.{docsParentDir, docsRepo, gitCurrentRepo}
 import sbt.Keys._
 import sbt._
 import sbtunidoc.GenJavadocPlugin.autoImport.unidocGenjavadocVersion
 
 object Common {
- lazy val CommonSettings: Seq[Setting[_]] = Seq(
+  private val enableFatalWarnings: Boolean = sys.props.get("enableFatalWarnings").contains("true")
+
+lazy val CommonSettings: Seq[Setting[_]] = Seq(
     
     docsRepo                                        := "https://github.com/tmtsoftware/tmtsoftware.github.io.git",
     docsParentDir                                   := "dms",
@@ -42,8 +43,6 @@ object Common {
     javaOptions += "-Xmx2G",
     Compile / doc / javacOptions ++= Seq("-Xdoclint:none"),
     doc / javacOptions ++= Seq("--ignore-source-errors"),
-    Test / testOptions ++= reporterOptions,
-    Test / packageBin / publishArtifact := true,
     // jitpack provides the env variable VERSION=<version being built> # A tag or commit. We have aliased VERSION to JITPACK_VERSION
     // we make use of it so that the version in class metadata (e.g. classOf[LocationService].getPackage.getSpecificationVersion)
     // and the maven repo match
@@ -52,8 +51,6 @@ object Common {
     Test / javaOptions ++= Seq("-Dakka.actor.serialize-messages=on"),
     autoCompilerPlugins     := true,
     Global / cancelable     := true, // allow ongoing test(or any task) to cancel with ctrl + c and still remain inside sbt
-    scalafmtOnCompile       := true,
-    unidocGenjavadocVersion := "0.18",
     commands += Command.command("openSite") { state =>
       val uri = s"file://${Project.extract(state).get(siteDirectory)}/${docsParentDir.value}/${version.value}/index.html"
       state.log.info(s"Opening browser at $uri ...")

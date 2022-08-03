@@ -1,4 +1,3 @@
-import com.typesafe.sbt.MultiJvmPlugin.MultiJvmKeys.MultiJvm
 import sbt.Keys._
 import sbt._
 import sbt.io.Path

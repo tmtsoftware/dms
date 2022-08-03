@@ -1,4 +1,3 @@
-import org.portablescala.sbtplatformdeps.PlatformDepsPlugin.autoImport._
 import sbt.Def.{setting => dep}
 import sbt._
 
